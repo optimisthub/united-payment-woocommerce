@@ -1,0 +1,48 @@
+services:
+  wordpress:
+    image: wordpress:latest
+    container_name: united-payment-woocommerce
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_DEBUG_LOG', true);
+        define('WP_DEBUG_DISPLAY', false);
+        define('SCRIPT_DEBUG', true);
+    volumes:
+      # - ./build/optimisthub-united-payment-for-woocommerce:/var/www/html/wp-content/plugins/optimisthub-united-payment-for-woocommerce
+      - .:/var/www/html/wp-content/plugins/optimisthub-united-payment-for-woocommerce
+      - ./logs:/var/www/html/wp-content/uploads/wc-logs
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: united-payment-woocommerce-db
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: united-payment-woocommerce-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: wordpress
+      PMA_PASSWORD: wordpress
+    depends_on:
+      - db
+
+volumes:
+  db_data:

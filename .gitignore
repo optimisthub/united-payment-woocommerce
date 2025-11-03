@@ -1,0 +1,8 @@
+node_modules/
+vendor/
+build/
+dist/
+languages/optimisthub-united-payment-for-woocommerce.pot
+logs/
+.phpcs-cache
+*.zip

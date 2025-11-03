@@ -1,0 +1,24 @@
+{
+	"name": "united-payment/united-payment-woocommerce",
+	"version": "1.0.0",
+	"type": "library",
+	"license": "GPL-3.0",
+	"require": {
+		"php": ">=7.4",
+		"moka-united/moka-united-ge-php": "^1.0"
+	},
+	"require-dev": {
+		"woocommerce/woocommerce-sniffs": "^1.0",
+		"wp-cli/i18n-command": "^2.6"
+	},
+	"autoload": {
+		"psr-4": {
+			"UnitedPayment\\WooCommerce\\": "src/"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	}
+}

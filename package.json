@@ -1,0 +1,19 @@
+{
+	"name": "united-payment-woocommerce",
+	"version": "1.0.0",
+	"scripts": {
+		"build": "npm run build:i18n && node bin/build.js",
+		"build:i18n": "npm run i18n:makepot && npm run i18n:merge",
+		"i18n:makepot": "./vendor/bin/wp i18n make-pot . languages/optimisthub-united-payment-for-woocommerce.pot --slug=optimisthub-united-payment-for-woocommerce --exclude=assets,bin,build,docker,docs,node_modules,tests,vendor",
+		"i18n:merge": "php bin/update-pot-file-references.php languages/optimisthub-united-payment-for-woocommerce.pot",
+		"lint:php": "vendor/bin/phpcs --standard=phpcs.xml.dist -n $(git ls-files | grep .php$)",
+		"lint:php-fix": "vendor/bin/phpcbf --standard=phpcs.xml.dist $(git ls-files | grep .php$)",
+		"up": "docker compose up -d && ./bin/docker-setup.sh",
+		"down": "docker compose down -v",
+		"rebuild": "docker compose down -v && docker compose up --build -d && ./bin/docker-setup.sh",
+		"logs": "docker compose logs -f"
+	},
+	"devDependencies": {
+		"archiver": "^7.0.1"
+	}
+}

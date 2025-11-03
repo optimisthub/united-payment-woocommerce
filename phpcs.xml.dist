@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Coding Standards">
+	<description>WooCommerce Payment Gateway</description>
+
+	<!-- Exclude paths -->
+	<exclude-pattern>./build/*</exclude-pattern>
+	<exclude-pattern>./dist/*</exclude-pattern>
+	<exclude-pattern>./node_modules/*</exclude-pattern>
+	<exclude-pattern>./vendor/*</exclude-pattern>
+	<exclude-pattern>./release/*</exclude-pattern>
+	<exclude-pattern>./bin/*</exclude-pattern>
+	<exclude-pattern>*\.(?!php$)</exclude-pattern>
+
+	<!-- Configs -->
+	<config name="minimum_supported_wp_version" value="6.3" />
+	<config name="testVersion" value="7.4-" />
+	<arg name="parallel" value="8" />
+	<arg value="ps" />
+
+	<!-- Rules -->
+	<rule ref="WooCommerce-Core" >
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found"/>
+
+		<!-- The rules are ignored for now, they will be activated in a future PR -->
+		<exclude name="Squiz.Commenting"/>
+		<exclude name="WordPress.Security.NonceVerification.Missing"/>
+	</rule>
+
+	<rule ref="WordPress-Core">
+		<!-- Disallow short array syntax -->
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
+
+		<!-- Allow filenames to follow PSR-4 -->
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+	</rule>
+
+	<!-- WordPress Plugin Review standards for wp.org submission -->
+	<rule ref="WordPress-Extra">
+		<!-- Already covered by WordPress-Core -->
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+	</rule>
+
+	<!-- Enforce text domain for translations -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="optimisthub-united-payment-for-woocommerce"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Check for deprecated WordPress functions -->
+	<rule ref="WordPress.WP.DeprecatedFunctions"/>
+
+	<!-- Check for deprecated WordPress parameters -->
+	<rule ref="WordPress.WP.DeprecatedParameters"/>
+
+	<!-- Check for deprecated WordPress classes -->
+	<rule ref="WordPress.WP.DeprecatedClasses"/>
+
+	<!-- Check for alternative functions -->
+	<rule ref="WordPress.WP.AlternativeFunctions"/>
+
+	<!-- Allow camelCase methods in sandbox classes to match external API interface -->
+	<rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
+		<exclude-pattern>src/Sandbox/Response.php</exclude-pattern>
+	</rule>
+
+	<!-- Disallow long array syntax -->
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+
+	<!-- PHP Compatibility checks -->
+	<rule ref="PHPCompatibility"/>
+
+</ruleset>
