@@ -1,30 +1,49 @@
-# United Payment for WooCommerce
+# ⚠️ Deprecated — do not install this repository
 
-Payment gateway plugin that enables you to accept credit and debit card payments in Georgian Lari (GEL) on your WooCommerce store.
+This repository is the old development tree of the United Payment gateway for
+WooCommerce (version **1.0.0**). It is **no longer maintained** and its `master`
+branch is **not installable as-is**.
 
-## Development
+## Why installing this ZIP breaks a site
 
-Install dependencies:
+`.gitignore` excludes `vendor/`, so this source tree has **no Composer
+autoloader**. The plugin cannot load a single one of its own classes, and a site
+that installs this ZIP stops with a fatal error on every page, including
+wp-admin:
+
+```
+Uncaught Error: Class "UnitedPayment\WooCommerce\Sandbox\PaymentPage" not found
+in .../wp-content/plugins/united-payment-woocommerce-master/optimisthub-united-payment-for-woocommerce.php:77
+```
+
+If you already installed this copy, delete the
+`wp-content/plugins/united-payment-woocommerce-master/` folder and install the
+released package instead. Your gateway settings are kept, because the gateway ID
+(`united_payment`) is unchanged.
+
+## Install the maintained plugin instead
+
+- **WordPress Plugin Directory (recommended):**
+  <https://wordpress.org/plugins/optimisthub-united-payment-for-woocommerce/>
+  — search for *Optimist Hub Payment Gateway* under **Plugins → Add New**.
+- **Current source repository:**
+  <https://github.com/optimisthub/optimisthub-united-payment-for-woocommerce>
+  — this one ships the built `vendor/` directory, so its ZIP is installable.
+- **Support forum:**
+  <https://wordpress.org/support/plugin/optimisthub-united-payment-for-woocommerce/>
+
+## Working from this source tree (developers only)
+
+If you have a reason to run this exact 1.0.0 code, build its dependencies
+yourself before activating it:
 
 ```bash
-npm install
 composer install
 ```
 
-You can use Docker to run a fully isolated development environment.
+Then copy the whole folder — including the generated `vendor/` directory — into
+`wp-content/plugins/`.
 
-1. Make sure Docker is installed (Docker Desktop is recommended).
+---
 
-2. From the project root, start the containers:
-
-   ```bash
-   npm run up
-   ```
-
-3. Access the site at: `http://localhost:8080`.
-
-To stop the containers:
-
-```bash
-npm run down
-```
+Developed by [Optimist Hub](https://optimisthub.com)
