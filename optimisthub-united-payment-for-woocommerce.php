@@ -26,10 +26,22 @@ define( 'UNITED_PAYMENT_PLUGIN_FILE', __FILE__ );
 define( 'UNITED_PAYMENT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'UNITED_PAYMENT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
-// Require Composer autoloader.
-if ( file_exists( UNITED_PAYMENT_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
-	require_once UNITED_PAYMENT_PLUGIN_DIR . 'vendor/autoload.php';
+/*
+ * Require Composer autoloader.
+ *
+ * This repository's `.gitignore` excludes `vendor/`, so the ZIP built from this
+ * source tree ships without an autoloader. That case is caught by
+ * `united_payment_classes_available()` below, so an incomplete installation
+ * shows an admin notice instead of taking the site down with a fatal
+ * "Class not found" error.
+ */
+$united_payment_autoloader = UNITED_PAYMENT_PLUGIN_DIR . 'vendor/autoload.php';
+
+if ( file_exists( $united_payment_autoloader ) ) {
+	require_once $united_payment_autoloader;
 }
+
+unset( $united_payment_autoloader );
 
 /**
  * Check if WooCommerce is active
@@ -62,11 +74,54 @@ function united_payment_is_woocommerce_active() {
 }
 
 /**
+ * Check whether the plugin's own classes can be loaded.
+ *
+ * A copy of the plugin taken straight from this repository has no `vendor/`
+ * directory, so no plugin class can be resolved. Without this check the plugin
+ * would call a missing class while `plugins_loaded` runs and take the whole
+ * site — including wp-admin — down with:
+ *
+ *     Uncaught Error: Class "UnitedPayment\WooCommerce\Sandbox\PaymentPage" not found
+ *
+ * @return bool True when the plugin's classes can be autoloaded.
+ */
+function united_payment_classes_available() {
+	return class_exists( 'UnitedPayment\\WooCommerce\\Sandbox\\PaymentPage' );
+}
+
+/**
+ * Admin notice for an incomplete installation
+ */
+function united_payment_incomplete_installation_notice() {
+	?>
+	<div class="notice notice-error">
+		<p>
+			<?php
+			echo wp_kses_post(
+				sprintf(
+					/* translators: %s: WordPress.org plugin page link */
+					__( '<strong>United Payment Gateway for WooCommerce</strong> cannot start because its dependencies are missing. Deactivate and delete this copy of the plugin, then install it again from %s.', 'optimisthub-united-payment-for-woocommerce' ),
+					'<a href="https://wordpress.org/plugins/optimisthub-united-payment-for-woocommerce/" target="_blank" rel="noopener noreferrer">WordPress.org</a>'
+				)
+			);
+			?>
+		</p>
+	</div>
+	<?php
+}
+
+/**
  * Initialize the gateway
  */
 function united_payment_init() {
 	if ( ! united_payment_is_woocommerce_active() ) {
 		add_action( 'admin_notices', 'united_payment_woocommerce_missing_notice' );
+		return;
+	}
+
+	// Stop before touching a class that cannot be loaded.
+	if ( ! united_payment_classes_available() ) {
+		add_action( 'admin_notices', 'united_payment_incomplete_installation_notice' );
 		return;
 	}
 
